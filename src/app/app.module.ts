@@ -14,6 +14,8 @@ import { environment } from 'src/environments/environment';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { FormsModule } from '@angular/forms';
 import { AuthInterceptor } from './modules/auth/services/interceptors/auth.interceptor';
+import { LocalStorageModule } from './modules/local-storage/local-storage.module';
+import { AzzoService } from './modules/services/azzo.service';
 
 
 @NgModule({
@@ -28,7 +30,8 @@ import { AuthInterceptor } from './modules/auth/services/interceptors/auth.inter
     InlineSVGModule.forRoot(),
     NgbModule,
     SweetAlert2Module.forRoot(),
-    FormsModule
+    FormsModule,
+    LocalStorageModule
   ],
   providers: [
     {
@@ -37,6 +40,7 @@ import { AuthInterceptor } from './modules/auth/services/interceptors/auth.inter
       multi: true,
       deps: [AuthService],
     },
+    AzzoService
   ],
   bootstrap: [AppComponent],
 })

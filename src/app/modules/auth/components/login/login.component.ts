@@ -3,7 +3,7 @@
   import { Observable } from 'rxjs';
   import { AuthService } from '../../services/auth.service';
   import { ActivatedRoute, Router } from '@angular/router';
-  import { Login } from '../../models/login.model';
+  import { AzzoLogin} from '../../models/login.model';
 
   @Component({
     selector: 'app-login',
@@ -46,21 +46,14 @@
       return this.loginForm.controls;
     }
 
-    submit() {
-      const login: Login = { email: this.f.email.value, senha: this.f.password.value };
+    async submit() {
+      const login: AzzoLogin = { email: this.f.email.value, senha: this.f.password.value };
       
-      this.authService.login(login).subscribe({
-        next: (response) => {
-          // Armazena o token diretamente e redireciona
-          const token = response.body.token;
-          this.authService.setToken(token);
+      const user = await this.authService.login(login);
+      if (user) {
           this.router.navigate(['/dashboard']);
-        },
-        error: (error) => {
-          // Captura a mensagem de erro diretamente do servidor
-          this.errorMessage = error.error.message || 'Erro no login.';
-          this.cdr.detectChanges(); 
-        },
-      });
+      } else {
+        this.router.navigate(['/']);
+      }
     }
   }

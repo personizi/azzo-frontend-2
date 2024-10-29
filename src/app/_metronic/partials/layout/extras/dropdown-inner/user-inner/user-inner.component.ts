@@ -2,7 +2,7 @@ import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { TranslationService } from '../../../../../../modules/i18n';
 import { AuthService } from '../../../../../../modules/auth';
-import { Login } from 'src/app/modules/auth/models/login.model';
+import { AzzoLogin } from 'src/app/modules/auth/models/login.model';
 
 @Component({
   selector: 'app-user-inner',
