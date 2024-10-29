@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { AzzoDecodedToken, AzzoLogin, AzzoTokens } from '../models/login.model';
+import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
+import { AzzoDecodedToken, AzzoLogin, AzzoTokens, Cargo } from '../models/login.model';
 import { LocalStorageService } from '../../local-storage/local-storage.service';
 import { AzzoService } from 'src/app/modules/services/azzo.service';
 import { decodeJwt } from '../../../shared/decodeJwt';
@@ -17,22 +17,23 @@ export class AuthService {
     private readonly azzoService: AzzoService,
   ) {}
 
-  async login(data: AzzoLogin): Promise<any> {
+  async login(data: AzzoLogin): Promise<Cargo> {
     try {
-      this.azzoService.login(data).subscribe({
-        next: (tokens: AzzoTokens) => {
-          // Usa a função `decodeJwt` para decodificar o token manualmente
-          console.log('Access Token encontrado==>', tokens.accessToken);
-          const decodedToken = decodeJwt(tokens.accessToken);
-          const cargo = decodedToken ? decodedToken.cargo : null;
+      this.localStorageService.remove(this.tokenKey);
 
-          // Armazena o token no localStorage
-          this.localStorageService.set(this.tokenKey, tokens.accessToken);
-        },
-      });
+      const tokens = await firstValueFrom(this.azzoService.login(data));
+
+      // Armazena o token no localStorage
+      this.localStorageService.set(this.tokenKey, tokens.accessToken);
+      this.authStatus.next(true);  // Atualiza o estado de autenticação
+      
+      // Decodifica o token para obter o cargo
+      const decodedToken = decodeJwt(tokens.accessToken);
+      console.log('CARGO =====>>>>', decodedToken.cargo);
+      
+      return decodedToken.cargo;
     } catch (error) {
       this.logOut();
-
       throw error;
     }
   }

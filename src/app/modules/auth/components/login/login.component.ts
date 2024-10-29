@@ -3,7 +3,7 @@
   import { Observable } from 'rxjs';
   import { AuthService } from '../../services/auth.service';
   import { ActivatedRoute, Router } from '@angular/router';
-  import { AzzoLogin} from '../../models/login.model';
+  import { AzzoLogin, Cargo } from '../../models/login.model';
 
   @Component({
     selector: 'app-login',
@@ -15,8 +15,7 @@
     hasError = false;
     returnUrl: string;
     isLoading$: Observable<boolean>;
-    errorMessage: string;
-    // private fields
+    errorMessage: string = '';
  
 
     constructor(
@@ -47,13 +46,23 @@
     }
 
     async submit() {
+      // Resetar estado de erro antes de cada tentativa de login
+      this.hasError = false;
+  
       const login: AzzoLogin = { email: this.f.email.value, senha: this.f.password.value };
-      
-      const user = await this.authService.login(login);
-      if (user) {
+  
+      try {
+        const cargo: Cargo = await this.authService.login(login);
+  
+        if (cargo && cargo.nome === 'Desenvolvedor') {
           this.router.navigate(['/dashboard']);
-      } else {
-        this.router.navigate(['/']);
+        } else {
+          this.router.navigate(['/crafted/account/overview']);
+        }
+      } catch (error) {
+        this.hasError = true;
+        this.errorMessage = (error as any)?.error?.message || 'Erro no login.';
+        this.cdr.detectChanges(); 
       }
     }
   }
