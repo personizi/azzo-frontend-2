@@ -11,11 +11,12 @@ const API_USERS_URL = `${environment.apiUrl}/auth`;
   providedIn: 'root',
 })
 export class AuthHTTPService {
+  private apiUrl = 'http://localhost:3000/auth';
   constructor(private http: HttpClient) {}
 
   // public methods
   login(email: string, password: string): Observable<any> {
-    return this.http.post<AuthModel>(`${API_USERS_URL}/login`, {
+    return this.http.post<AuthModel>(`${this.apiUrl}/login`, {
       email,
       password,
     });
@@ -33,12 +34,12 @@ export class AuthHTTPService {
     });
   }
 
-  getUserByToken(token: string): Observable<UserModel> {
-    const httpHeaders = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-    return this.http.get<UserModel>(`${API_USERS_URL}/me`, {
-      headers: httpHeaders,
-    });
-  }
+  // getUserByToken(token: string): Observable<UserModel> {
+  //   const httpHeaders = new HttpHeaders({
+  //     Authorization: `Bearer ${token}`,
+  //   });
+  //   return this.http.get<UserModel>(`${API_USERS_URL}/me`, {
+  //     headers: httpHeaders,
+  //   });
+  // }
 }
